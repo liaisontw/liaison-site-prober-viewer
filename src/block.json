@@ -1,0 +1,12 @@
+{
+  "apiVersion": 2,
+  "name": "site-prober/log-viewer",
+  "title": "Liaison Site Prober Viewer",
+  "category": "widgets",
+  "icon": "list-view",
+  "editorScript": "file:./build/index.js",
+  "attributes": {
+    "selectedPlugin": { "type": "string", "default": "" }
+  },
+  "start": "./node_modules/@wordpress/scripts/bin/wp-scripts.js start --webpack-copy-php"
+}
