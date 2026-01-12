@@ -5,6 +5,8 @@
   "category": "widgets",
   "icon": "list-view",
   "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
   "attributes": {
     "selectedPlugin": {
       "type": "string",

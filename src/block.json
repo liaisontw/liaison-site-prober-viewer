@@ -4,7 +4,9 @@
   "title": "Liaison Site Prober Viewer",
   "category": "widgets",
   "icon": "list-view",
-  "editorScript": "file:./build/index.js",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
   "attributes": {
     "selectedPlugin": { "type": "string", "default": "" }
   },

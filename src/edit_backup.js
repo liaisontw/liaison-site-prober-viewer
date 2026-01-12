@@ -31,21 +31,55 @@ import './editor.scss';
  */
 
 import { useState, useEffect } from '@wordpress/element';
-import { Spinner, Notice } from '@wordpress/components';
+import { SelectControl, Spinner, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
-import { Card } from '@wordpress/components';
 
-export default function Edit() {
+export default function Edit( { attributes, setAttributes } ) {
+    const { selectedPlugin } = attributes;
+
+    const [ plugins, setPlugins ] = useState( [] );
     const [ logs, setLogs ] = useState( [] );
-    const [ loading, setLoading ] = useState( true );
+    const [ loading, setLoading ] = useState( false );
     const [ error, setError ] = useState( '' );
 
-    console.log( 'logs:', logs );
-
     /* -------------------------------------------------
-     * Load all logs once
+     * Load plugin list (once)
      * ------------------------------------------------- */
     useEffect( () => {
+        let isMounted = true;
+
+        async function loadPlugins() {
+            try {
+                const data = await apiFetch( {
+                    path: '/site-prober/v1/plugins',
+                } );
+
+                if ( isMounted ) {
+                    setPlugins( Array.isArray( data ) ? data : [] );
+                }
+            } catch ( err ) {
+                if ( isMounted ) {
+                    setError( 'Failed to load plugins.' );
+                }
+            }
+        }
+
+        loadPlugins();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [] );
+
+    /* -------------------------------------------------
+     * Load logs when plugin changes
+     * ------------------------------------------------- */
+    useEffect( () => {
+        if ( ! selectedPlugin ) {
+            setLogs( [] );
+            return;
+        }
+
         let isMounted = true;
 
         async function loadLogs() {
@@ -54,7 +88,9 @@ export default function Edit() {
 
             try {
                 const data = await apiFetch( {
-                    path: '/site-prober/v1/logs',
+                    path: `/site-prober/v1/logs?plugin=${ encodeURIComponent(
+                        selectedPlugin
+                    ) }`,
                 } );
 
                 if ( isMounted ) {
@@ -72,54 +108,52 @@ export default function Edit() {
         }
 
         loadLogs();
-        
 
         return () => {
             isMounted = false;
         };
-    }, [] );
+    }, [ selectedPlugin ] );
 
     /* -------------------------------------------------
      * Render
      * ------------------------------------------------- */
     return (
         <div className="splv-editor">
-            <h3>Site Prober Logs</h3>
+            <SelectControl
+                label="Select Plugin"
+                value={ selectedPlugin }
+                options={ [
+                    { label: 'Select a plugin', value: '' },
+                    ...plugins.map( ( plugin ) => ( {
+                        label: plugin,
+                        value: plugin,
+                    } ) ),
+                ] }
+                onChange={ ( value ) =>
+                    setAttributes( { selectedPlugin: value } )
+                }
+            />
 
             { loading && <Spinner /> }
 
             { error && <Notice status="error">{ error }</Notice> }
 
-            { ! loading && ! error && logs.length === 0 && (
+            { ! loading && ! error && logs.length === 0 && selectedPlugin && (
                 <Notice status="info">No logs found.</Notice>
             ) }
-            
-            <Card>
-                <table className="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th className="manage-column column-date">Time</th>
-                            <th className="manage-column column-user">User</th>
-                            <th className="manage-column column-ip">IP</th>
-                            <th className="manage-column column-action">Action</th>
-                            <th className="manage-column column-object">object</th>
-                            <th className="manage-column column-description">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {logs.map(log => (
-                            <tr key={log.id}>
-                                <td className="column-date">{log.created_at}</td>
-                                <td className="column-user">{log.user_id}</td>
-                                <td className="column-ip">{log.ip}</td>
-                                <td className="column-action">{log.action}</td>
-                                <td className="column-object">{log.object_type}</td>
-                                <td className="column-description">{log.description}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </Card>
+
+            <ul className="splv-log-list">
+                { logs.map( ( log ) => (
+                    <li key={ log.id }>
+                        <strong>{ log.plugin }</strong>
+                        <br />
+                        { log.message }
+                        <br />
+                        <small>{ log.created_at }</small>
+                    </li>
+                ) ) }
+            </ul>
         </div>
     );
 }
+

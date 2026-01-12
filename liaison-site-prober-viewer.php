@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       liaison site prober viewer
  * Plugin URI:        https://github.com/liaisontw/
- * Description:       This is a description of the plugin.
+ * Description:       Gutenberg Block for viewing logs in posts(out of admin panel)of liaison-site-prober plugin.
  * Version:           1.0.0
  * Author:            liason
  * Author URI:        https://github.com/liaisontw/
@@ -35,6 +35,121 @@
 
 
 function liaisipv_register_block() {
-    register_block_type( __DIR__ . '/build'  );
+    register_block_type(
+    __DIR__ . '/build',
+    [
+        'render_callback' => 'liaisipv_render_logs_block',
+    ]
+);
 }
 add_action( 'init', 'liaisipv_register_block' );
+
+/*
+function liaisipv_render_logs_block( $attributes ) {
+    global $wpdb;
+    
+    $rows = $wpdb->get_results(
+        "SELECT 
+            id,
+            created_at,
+            user_id,
+            ip,
+            action,
+            object_type,
+            description
+        FROM {$wpdb->wpsp_activity} 
+        ORDER BY created_at 
+        DESC LIMIT 50",
+        ARRAY_A
+    );
+
+    if ( empty( $rows ) ) {
+        return '<p>No logs found.</p>';
+    }
+
+    ob_start();
+    ?>
+    <table class="wp-list-table widefat fixed striped">
+        <thead>
+            <tr>
+                <th class="manage-column column-date"       >Date</th>
+                <th class="manage-column column-user"       >User</th>
+                <th class="manage-column column-ip"         >IP</th>
+                <th class="manage-column column-action"     >Action</th>
+                <th class="manage-column column-object"     >Type</th>
+                <th class="manage-column column-description">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ( $rows as $row ) : ?>
+                <tr>
+                    <td class="column-date">       <?php echo esc_html( $row['created_at'] ); ?></td>
+                    <td class="column-user">       <?php echo esc_html( $row['user_id'] ); ?></td>
+                    <td class="column-ip">         <?php echo esc_html( $row['ip'] ); ?></td>
+                    <td class="column-action">     <?php echo esc_html( $row['action'] ); ?></td>
+                    <td class="column-object">     <?php echo esc_html( $row['object_type'] ); ?></td>
+                    <td class="column-description"><?php echo esc_html( $row['description'] ); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php
+    return ob_get_clean();
+}
+    */
+
+function liaisipv_render_logs_block( $attributes, $content, $block ) {
+    global $wpdb;
+
+    $rows = $wpdb->get_results(
+        "SELECT
+            id,
+            created_at,
+            user_id,
+            ip,
+            action,
+            object_type,
+            description
+         FROM {$wpdb->wpsp_activity}
+         ORDER BY created_at DESC
+         LIMIT 50",
+        ARRAY_A
+    );
+
+    if ( empty( $rows ) ) {
+        return '<p>No logs found.</p>';
+    }
+
+    $wrapper_attributes = get_block_wrapper_attributes();
+
+    ob_start();
+    ?>
+    <div <?php echo $wrapper_attributes; ?>>
+        <table class="splv-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>IP</th>
+                    <th>Action</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ( $rows as $row ) : ?>
+                    <tr>
+                        <td><?php echo esc_html( $row['created_at'] ); ?></td>
+                        <td><?php echo esc_html( $row['user_id'] ); ?></td>
+                        <td><?php echo esc_html( $row['ip'] ); ?></td>
+                        <td><?php echo esc_html( $row['action'] ); ?></td>
+                        <td><?php echo esc_html( $row['object_type'] ); ?></td>
+                        <td><?php echo esc_html( $row['description'] ); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+    return ob_get_clean();
+}

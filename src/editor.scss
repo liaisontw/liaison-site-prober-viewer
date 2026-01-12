@@ -3,7 +3,61 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
+@import "~@wordpress/base-styles/colors";
+@import "~@wordpress/base-styles/mixins";
 
-.wp-block-block-development-examples-block-dynamic-rendering-64756b {
-	border: 1px dotted #f00;
+ .editor-styles-wrapper {
+	table.wp-list-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+	.splv-log-table {
+		width: 100%;
+		border-collapse: collapse; 
+		table-layout: fixed;       
+	}
+
+	.splv-log-table th,
+	.splv-log-table td {
+		border: 1px solid #ccc;
+		padding: 8px 10px;
+		text-align: left;
+		vertical-align: top;
+	}
+
+	.splv-log-table thead th {
+		background-color: #f1f1f1;
+		font-weight: 600;
+	}
+
+	.splv-log-table th:nth-child(1),
+	.splv-log-table td:nth-child(1) {
+		width: 60px; /* User */
+	}
+
+	.splv-log-table th:nth-child(2),
+	.splv-log-table td:nth-child(2) {
+		width: 60px; /* IP */
+	}
+
+	.splv-log-table th:nth-child(4),
+	.splv-log-table td:nth-child(4) {
+		width: 60px; /* Type */
+	}
+
+	.splv-log-table th:nth-child(6),
+	.splv-log-table td:nth-child(6) {
+		width: 160px; /* Created At */
+	}
+
+	.splv-log-table th:nth-child(5),
+	.splv-log-table td:nth-child(5) {
+		word-break: break-word; /* Description */
+	}
+
+	.splv-log-table {
+		border-collapse: collapse;
+	}
+
 }
