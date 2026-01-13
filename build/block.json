@@ -7,6 +7,10 @@
   "editorScript": "file:./index.js",
   "style": "file:./style-index.css",
   "editorStyle": "file:./index.css",
+  "description": "Display Site Prober logs in a table.",
+  "supports": {
+    "html": false
+  },
   "attributes": {
     "selectedPlugin": {
       "type": "string",

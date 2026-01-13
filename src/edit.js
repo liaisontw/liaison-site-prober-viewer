@@ -33,14 +33,11 @@ import './editor.scss';
 import { useState, useEffect } from '@wordpress/element';
 import { Spinner, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
-import { Card } from '@wordpress/components';
 
 export default function Edit() {
     const [ logs, setLogs ] = useState( [] );
     const [ loading, setLoading ] = useState( true );
     const [ error, setError ] = useState( '' );
-
-    console.log( 'logs:', logs );
 
     /* -------------------------------------------------
      * Load all logs once
@@ -53,6 +50,8 @@ export default function Edit() {
             setError( '' );
 
             try {
+                //const res = await fetch('/wp-json/site-prober/v1/logs');
+                //const data = await res.json();
                 const data = await apiFetch( {
                     path: '/site-prober/v1/logs',
                 } );
@@ -79,47 +78,40 @@ export default function Edit() {
         };
     }, [] );
 
+    if (loading) return <Spinner />;
+    if (error) return <Notice status="error">{error}</Notice>;
+    
     /* -------------------------------------------------
      * Render
      * ------------------------------------------------- */
     return (
         <div className="splv-editor">
             <h3>Site Prober Logs</h3>
-
-            { loading && <Spinner /> }
-
-            { error && <Notice status="error">{ error }</Notice> }
-
-            { ! loading && ! error && logs.length === 0 && (
-                <Notice status="info">No logs found.</Notice>
-            ) }
-            
-            <Card>
-                <table className="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th className="manage-column column-date">Time</th>
-                            <th className="manage-column column-user">User</th>
-                            <th className="manage-column column-ip">IP</th>
-                            <th className="manage-column column-action">Action</th>
-                            <th className="manage-column column-object">object</th>
-                            <th className="manage-column column-description">Description</th>
+            <table className="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th className="manage-column column-date">Time</th>
+                        <th className="manage-column column-user">User</th>
+                        <th className="manage-column column-ip">IP</th>
+                        <th className="manage-column column-action">Action</th>
+                        <th className="manage-column column-object">object</th>
+                        <th className="manage-column column-description">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {logs.map(log => (
+                        <tr key={log.id}>
+                            <td className="column-date">{log.created_at}</td>
+                            <td className="column-user">{log.user_id}</td>
+                            <td className="column-ip">{log.ip}</td>
+                            <td className="column-action">{log.action}</td>
+                            <td className="column-object">{log.object_type}</td>
+                            <td className="column-description">{log.description}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {logs.map(log => (
-                            <tr key={log.id}>
-                                <td className="column-date">{log.created_at}</td>
-                                <td className="column-user">{log.user_id}</td>
-                                <td className="column-ip">{log.ip}</td>
-                                <td className="column-action">{log.action}</td>
-                                <td className="column-object">{log.object_type}</td>
-                                <td className="column-description">{log.description}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </Card>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
+

@@ -25,14 +25,6 @@
  * Domain Path:       /languages
  */
 
-//1. Copy package.json from wordpress block example
-//2. node -v, v24.12.0 (>v18.x)
-//3. npm install
-//4. npm run build
-
-
-
-
 
 function liaisipv_register_block() {
     register_block_type(
@@ -44,59 +36,6 @@ function liaisipv_register_block() {
 }
 add_action( 'init', 'liaisipv_register_block' );
 
-/*
-function liaisipv_render_logs_block( $attributes ) {
-    global $wpdb;
-    
-    $rows = $wpdb->get_results(
-        "SELECT 
-            id,
-            created_at,
-            user_id,
-            ip,
-            action,
-            object_type,
-            description
-        FROM {$wpdb->wpsp_activity} 
-        ORDER BY created_at 
-        DESC LIMIT 50",
-        ARRAY_A
-    );
-
-    if ( empty( $rows ) ) {
-        return '<p>No logs found.</p>';
-    }
-
-    ob_start();
-    ?>
-    <table class="wp-list-table widefat fixed striped">
-        <thead>
-            <tr>
-                <th class="manage-column column-date"       >Date</th>
-                <th class="manage-column column-user"       >User</th>
-                <th class="manage-column column-ip"         >IP</th>
-                <th class="manage-column column-action"     >Action</th>
-                <th class="manage-column column-object"     >Type</th>
-                <th class="manage-column column-description">Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ( $rows as $row ) : ?>
-                <tr>
-                    <td class="column-date">       <?php echo esc_html( $row['created_at'] ); ?></td>
-                    <td class="column-user">       <?php echo esc_html( $row['user_id'] ); ?></td>
-                    <td class="column-ip">         <?php echo esc_html( $row['ip'] ); ?></td>
-                    <td class="column-action">     <?php echo esc_html( $row['action'] ); ?></td>
-                    <td class="column-object">     <?php echo esc_html( $row['object_type'] ); ?></td>
-                    <td class="column-description"><?php echo esc_html( $row['description'] ); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <?php
-    return ob_get_clean();
-}
-    */
 
 function liaisipv_render_logs_block( $attributes, $content, $block ) {
     global $wpdb;
@@ -120,6 +59,7 @@ function liaisipv_render_logs_block( $attributes, $content, $block ) {
         return '<p>No logs found.</p>';
     }
 
+    //loading from build/style-index.css
     $wrapper_attributes = get_block_wrapper_attributes();
 
     ob_start();
