@@ -5,22 +5,29 @@ on:
   pull_request:
 
 jobs:
+
   phpunit:
     runs-on: ubuntu-latest
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mariadb:10.6
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: wordpress_test
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+      
+        #image: mysql:8.0
+        #env:
+        #  MYSQL_ROOT_PASSWORD: root
+        #  MYSQL_DATABASE: wordpress_test
+        #ports:
+        #  - 3306:3306
+        #options: >-
+        #  --health-cmd="mysqladmin ping --silent"
+        #  --health-interval=10s
+        #  --health-timeout=5s
+        #  --health-retries=5
 
     steps:
       - name: Checkout repository
