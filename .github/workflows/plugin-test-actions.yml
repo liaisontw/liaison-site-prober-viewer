@@ -53,6 +53,7 @@ jobs:
       - name: Install WordPress test suite
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
+          sed -n '1,200p' bin/install-wp-tests.sh
 
       - name: Install PHPUnit
         run: |
@@ -63,3 +64,5 @@ jobs:
       - name: Run PHPUnit
         run: |
           phpunit
+          
+
