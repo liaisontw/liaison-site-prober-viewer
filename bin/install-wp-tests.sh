@@ -43,11 +43,11 @@ if [ ! -d "$WP_TESTS_DIR" ]; then
     fi
 
     # Download includes/ and data/ from SVN, but as ZIP export — NO SVN client needed
-    svn export https://develop.svn.wordpress.org/${TESTS_TAG}/tests/phpunit/includes \
-    "$WP_TESTS_DIR/includes"
+    download "https://develop.svn.wordpress.org/${TESTS_TAG}/tests/phpunit/includes.zip" "/tmp/includes.zip"
+    download "https://develop.svn.wordpress.org/${TESTS_TAG}/tests/phpunit/data.zip" "/tmp/data.zip"
 
-    svn export https://develop.svn.wordpress.org/${TESTS_TAG}/tests/phpunit/data \
-    "$WP_TESTS_DIR/data"
+    unzip -q "/tmp/includes.zip" -d "$WP_TESTS_DIR"
+    unzip -q "/tmp/data.zip" -d "$WP_TESTS_DIR"
 
     # also need wp-tests-config-sample.php
     download "https://develop.svn.wordpress.org/${TESTS_TAG}/wp-tests-config-sample.php" \
