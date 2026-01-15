@@ -42,10 +42,10 @@ jobs:
           extensions: mysqli, zip
           coverage: none
 
-      #- name: Install system dependencies
-      #  run: |
-      #    sudo apt-get update
-      #    sudo apt-get install -y subversion mysql-client unzip
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y subversion mysql-client unzip
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
