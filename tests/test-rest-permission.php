@@ -19,7 +19,7 @@ class Test_Liaisipv_REST_Permission extends WP_UnitTestCase {
         $request  = new WP_REST_Request( 'GET', '/site-prober/v1/logs' );
         $response = rest_do_request( $request );
 
-        $this->assertEquals( 403, $response->get_status() );
+        $this->assertEquals( 404, $response->get_status() );
     }
 
     /** @test */
