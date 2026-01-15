@@ -36,6 +36,37 @@ function liaisipv_register_block() {
 }
 add_action( 'init', 'liaisipv_register_block' );
 
+register_activation_hook( __FILE__, 'liaisipr_activation_check' );
+
+function liaisipr_activation_check() {
+
+    if ( ! current_user_can( 'activate_plugins' ) ) {
+        return;
+    }
+
+    if ( ! function_exists( 'get_plugin_data' ) ) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+
+    $plugin_file = WP_PLUGIN_DIR . '/liaison-site-prober_20251215backup/liaison-site-prober.php';
+    $data = get_plugin_data( $plugin_file );
+
+    if ( !empty( $data['Version'] ) && $data['Version'] >= '1.2.0' ) {
+        error_log( 'Plugin name: ' . $data['Name'] );
+        error_log( 'Plugin version: ' . $data['Version'] );
+    } else {
+        deactivate_plugins( plugin_basename( __FILE__ ) );
+
+        wp_die(
+            '<h1>Plugin Activation Error</h1>
+             <p><strong>Liaison Site Prober</strong> plugin header is missing or invalid.</p>
+             <p>Please reinstall the plugin or contact the developer.</p>',
+            'Activation Error',
+            [ 'back_link' => true ]
+        );
+    }
+}
+
 
 function liaisipv_render_logs_block( $attributes, $content, $block ) {
     global $wpdb;
