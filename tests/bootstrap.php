@@ -21,11 +21,21 @@ require_once $_tests_dir . '/includes/functions.php';
  */
 
 function _manually_load_plugin() {
-	require dirname( __DIR__, 1 ) . '/liaison-site-prober.php';
+	require dirname( __DIR__, 1 ) . '/liaison-site-prober-viewer.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 // Start up the WP testing environment.
+// Load PHPUnit Polyfills FIRST
+if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {
+    define(
+        'WP_TESTS_PHPUNIT_POLYFILLS_PATH',
+        dirname( __DIR__ ) . '/vendor/yoast/phpunit-polyfills'
+    );
+}
+
+// Then load WP test bootstrap
+//require getenv( 'WP_TESTS_DIR' ) . '/includes/bootstrap.php';
 require $_tests_dir . '/includes/bootstrap.php';
 
 
