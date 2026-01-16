@@ -23,4 +23,4 @@ jobs:
         run: npm ci
 
       - name: Run Jest tests
-        run: npm test
+        run: npx wp-scripts test-unit-js
