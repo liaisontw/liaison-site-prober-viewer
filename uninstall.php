@@ -19,7 +19,7 @@
  * For more information, see the following discussion:
  * https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913
  *
- * @link       https://github.com/liaisontw
+ * @link       https://github.com/liaisontw/liaison-site-prober-viewer
  * @since      1.0.0
  *
  * @package    liaison_site_prober_viewer

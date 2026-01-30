@@ -7,13 +7,7 @@ Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-
-High-performance Gutenberg block to visualize Liaison Site Prober logs via REST API. Secure, dynamic, and optimized for speed.
-
-== Description ==
-A dynamic Gutenberg block for Liaison Site Prober that fetches and displays real-time 
-system logs via the REST API. Engineered for performance and security, 
-it provides a seamless way to visualize site activity without compromising page speed.
+Description: Gutenberg Block for viewing logs (from liaison-site-prober plugin) inside posts/pages. Dynamic block fetches logs via REST API.
 
 === Architecture ===
 

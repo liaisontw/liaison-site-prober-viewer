@@ -8,13 +8,13 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://github.com/liaisontw
+ * @link              https://github.com/liaisontw/liaison-site-prober-viewer
  * @since             1.0.0
  * @package           liaison_site_prober_viewer
  *
  * @wordpress-plugin
- * Plugin Name:       liaison site prober viewer
- * Plugin URI:        https://github.com/liaisontw/
+ * Plugin Name:       liaison site prober viewer DEV
+ * Plugin URI:        https://github.com/liaisontw/liaison-site-prober-viewer
  * Description:       Gutenberg Block for viewing logs in posts(out of admin panel)of liaison-site-prober plugin.
  * Version:           1.0.0
  * Author:            liason
@@ -24,7 +24,7 @@
  * Text Domain:       liaison-site-prober-viewer
  * Domain Path:       /languages
  */
-
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 function liaisipv_register_block() {
     register_block_type(
@@ -36,9 +36,9 @@ function liaisipv_register_block() {
 }
 add_action( 'init', 'liaisipv_register_block' );
 
-register_activation_hook( __FILE__, 'liaisipr_activation_check' );
+register_activation_hook( __FILE__, 'liaisipv_activation_check' );
 
-function liaisipr_activation_check() {
+function liaisipv_activation_check() {
 
     if ( ! current_user_can( 'activate_plugins' ) ) {
         return;
@@ -52,8 +52,7 @@ function liaisipr_activation_check() {
     $data = get_plugin_data( $plugin_file );
 
     if ( !empty( $data['Version'] ) && $data['Version'] >= '1.2.0' ) {
-        error_log( 'Plugin name: ' . $data['Name'] );
-        error_log( 'Plugin version: ' . $data['Version'] );
+        ;
     } else {
         deactivate_plugins( plugin_basename( __FILE__ ) );
 
@@ -68,43 +67,60 @@ function liaisipr_activation_check() {
 }
 
 
+/**
+ * Render function for the Liaison Site Prober Viewer block.
+ *
+ * @param array    $attributes Block attributes.
+ * @param string   $content    Block inner content.
+ * @param WP_Block $block      Block instance.
+ * @return string              Rendered HTML.
+ */
 function liaisipv_render_logs_block( $attributes, $content, $block ) {
     global $wpdb;
 
-    $rows = $wpdb->get_results(
-        "SELECT
-            id,
-            created_at,
-            user_id,
-            ip,
-            action,
-            object_type,
-            description
-         FROM {$wpdb->wpsp_activity}
-         ORDER BY created_at DESC
-         LIMIT 50",
-        ARRAY_A
-    );
+    $cache_key   = 'liaisipv_logs_limit_50';
+    $cache_group = 'liaisipv_activity';
+    
+    $rows = wp_cache_get( $cache_key, $cache_group );
 
-    if ( empty( $rows ) ) {
-        return '<p>No logs found.</p>';
+    if ( false === $rows ) {
+        $rows = $wpdb->get_results(
+            "SELECT
+                id,
+                created_at,
+                user_id,
+                ip,
+                action,
+                object_type,
+                description
+            FROM {$wpdb->wpsp_activity}
+            ORDER BY created_at DESC
+            LIMIT 50",
+            ARRAY_A
+        );
+
+
+        wp_cache_set( $cache_key, $rows, $cache_group, HOUR_IN_SECONDS );
     }
 
-    //loading from build/style-index.css
+    if ( empty( $rows ) ) {
+        return '<p>' . esc_html__( 'No logs found.', 'liaison-site-prober-viewer' ) . '</p>';
+    }
+
     $wrapper_attributes = get_block_wrapper_attributes();
 
     ob_start();
     ?>
-    <div <?php echo $wrapper_attributes; ?>>
+    <div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
         <table class="splv-table">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>User</th>
-                    <th>IP</th>
-                    <th>Action</th>
-                    <th>Type</th>
-                    <th>Description</th>
+                    <th><?php esc_html_e( 'Date', 'liaison-site-prober-viewer' ); ?></th>
+                    <th><?php esc_html_e( 'User', 'liaison-site-prober-viewer' ); ?></th>
+                    <th><?php esc_html_e( 'IP', 'liaison-site-prober-viewer' ); ?></th>
+                    <th><?php esc_html_e( 'Action', 'liaison-site-prober-viewer' ); ?></th>
+                    <th><?php esc_html_e( 'Type', 'liaison-site-prober-viewer' ); ?></th>
+                    <th><?php esc_html_e( 'Description', 'liaison-site-prober-viewer' ); ?></th>
                 </tr>
             </thead>
             <tbody>
