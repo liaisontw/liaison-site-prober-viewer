@@ -1,5 +1,5 @@
 === Liaison Site Prober Viewer ===
-Contributors: liason
+Contributors: Liaison  
 Tags: Gutenberg, block, site-prober, logs
 Requires at least: 6.0
 Tested up to: 6.9

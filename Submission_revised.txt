@@ -1,0 +1,15 @@
+20260211 submission revised:
+1.[Done] Typo: contributors "liason" ==> "Liaison"
+2.[Done] Starting with WordPress 7.0, all editor blocks 
+    are required to use apiVersion 3 (or higher).
+    liaison-site-prober-viewer/build/block.json - Defined apiVersion is 2
+    liaison-site-prober-viewer/src/block.json - Defined apiVersion is 2
+3.[Done] Determine files and directories locations correctly
+    liaison-site-prober-viewer.php:51 
+    $plugin_file = WP_PLUGIN_DIR . 
+    '/liaison-site-prober_20251215backup/
+    liaison-site-prober.php'; -----> WP_PLUGIN_DIR
+    Replaced by checking LIAISIPR_VERSION definition.
+4.[Done]Unsafe SQL calls
+    Use wpdb::prepare in the SQL query.
+

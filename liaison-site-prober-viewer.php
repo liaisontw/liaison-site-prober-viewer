@@ -44,15 +44,8 @@ function liaisipv_activation_check() {
         return;
     }
 
-    if ( ! function_exists( 'get_plugin_data' ) ) {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-    }
-
-    $plugin_file = WP_PLUGIN_DIR . '/liaison-site-prober_20251215backup/liaison-site-prober.php';
-    $data = get_plugin_data( $plugin_file );
-
-    if ( !empty( $data['Version'] ) && $data['Version'] >= '1.2.0' ) {
-        ;
+    if ( defined( 'LIAISIPR_VERSION' ) && ('LIAISIPR_VERSION' >= '1.2.0') ) {
+        return;
     } else {
         deactivate_plugins( plugin_basename( __FILE__ ) );
 
@@ -84,7 +77,7 @@ function liaisipv_render_logs_block( $attributes, $content, $block ) {
     $rows = wp_cache_get( $cache_key, $cache_group );
 
     if ( false === $rows ) {
-        $rows = $wpdb->get_results(
+        $query = $wpdb->prepare(
             "SELECT
                 id,
                 created_at,
@@ -95,7 +88,10 @@ function liaisipv_render_logs_block( $attributes, $content, $block ) {
                 description
             FROM {$wpdb->wpsp_activity}
             ORDER BY created_at DESC
-            LIMIT 50",
+            LIMIT 50"
+        );
+        $rows = $wpdb->get_results(
+            $query,
             ARRAY_A
         );
 
