@@ -62,7 +62,7 @@ function liaisipv_dependency_notice() {
     if ( get_option( 'liaisipv_dependency_error' ) ) {
 
         echo '<div class="notice notice-error"><p>';
-        echo '<strong>Liaison Site Insight Pro</strong> requires ';
+        echo '<strong>Liaison Site Prober Viewer</strong> requires ';
         echo '<strong>Liaison Site Prober</strong> version 1.2.0 or higher.';
         echo '</p></div>';
 
