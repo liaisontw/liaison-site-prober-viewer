@@ -38,24 +38,35 @@ add_action( 'init', 'liaisipv_register_block' );
 
 register_activation_hook( __FILE__, 'liaisipv_activation_check' );
 
+register_activation_hook( __FILE__, 'liaisipv_activation_check' );
+
 function liaisipv_activation_check() {
 
     if ( ! current_user_can( 'activate_plugins' ) ) {
         return;
     }
 
-    if ( defined( 'LIAISIPR_VERSION' ) && ('LIAISIPR_VERSION' >= '1.2.0') ) {
-        return;
-    } else {
+    if ( ! defined( 'LIAISIPR_VERSION' ) ||
+         ! version_compare( LIAISIPR_VERSION, '1.2.0', '>=' ) ) {
+
         deactivate_plugins( plugin_basename( __FILE__ ) );
 
-        wp_die(
-            '<h1>Plugin Activation Error</h1>
-             <p><strong>Liaison Site Prober</strong> plugin header is missing or invalid.</p>
-             <p>Please reinstall the plugin or contact the developer.</p>',
-            'Activation Error',
-            [ 'back_link' => true ]
-        );
+        add_option( 'liaisipv_dependency_error', true );
+    }
+}
+
+add_action( 'admin_notices', 'liaisipv_dependency_notice' );
+
+function liaisipv_dependency_notice() {
+
+    if ( get_option( 'liaisipv_dependency_error' ) ) {
+
+        echo '<div class="notice notice-error"><p>';
+        echo '<strong>Liaison Site Insight Pro</strong> requires ';
+        echo '<strong>Liaison Site Prober</strong> version 1.2.0 or higher.';
+        echo '</p></div>';
+
+        delete_option( 'liaisipv_dependency_error' );
     }
 }
 
@@ -77,24 +88,23 @@ function liaisipv_render_logs_block( $attributes, $content, $block ) {
     $rows = wp_cache_get( $cache_key, $cache_group );
 
     if ( false === $rows ) {
-        $query = $wpdb->prepare(
-            "SELECT
-                id,
-                created_at,
-                user_id,
-                ip,
-                action,
-                object_type,
-                description
-            FROM {$wpdb->wpsp_activity}
-            ORDER BY created_at DESC
-            LIMIT 50"
-        );
         $rows = $wpdb->get_results(
-            $query,
+            $wpdb->prepare(
+                "SELECT
+                    id,
+                    created_at,
+                    user_id,
+                    ip,
+                    action,
+                    object_type,
+                    description
+                FROM {$wpdb->wpsp_activity}
+                ORDER BY created_at DESC
+                LIMIT %d",
+                50
+            ),
             ARRAY_A
         );
-
 
         wp_cache_set( $cache_key, $rows, $cache_group, HOUR_IN_SECONDS );
     }
